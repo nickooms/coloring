@@ -31,7 +31,10 @@ const getColor = () => {
 };
 const app: HTMLDivElement = document.querySelector<HTMLDivElement>('#app')!;
 const img: HTMLImageElement = document.createElement('img');
-const selectImage = () => {
+const menu: HTMLDivElement = document.createElement('div');
+menu.id = 'menu';
+app.appendChild(menu);
+const createSelectImage = () => {
   const selectImage = document.createElement('select');
   selectImage.id = 'selectImage';
   DEFAULT_IMAGES.forEach((image) => {
@@ -47,13 +50,15 @@ const selectImage = () => {
   return selectImage;
 };
 let front = false;
-
+let lightnessThreshold = 50;
+let video: HTMLVideoElement;
 navigator.mediaDevices
   .getUserMedia({
     video: { facingMode: front ? 'user' : 'environment' },
   })
   .then((mediaStream) => {
-    const video = document.createElement('video');
+    video = document.createElement('video');
+    video.style.display = 'none';
     document.body.appendChild(video);
     video.srcObject = mediaStream;
     video.onloadedmetadata = () => {
@@ -61,21 +66,33 @@ navigator.mediaDevices
     };
   })
   .catch((err) => {
-    // always check for errors at the end.
     console.error(`${err.name}: ${err.message}`);
   });
-app.appendChild(selectImage());
-const flipButton = document.createElement('button');
-flipButton.textContent = 'Flip';
-flipButton.id = 'flip-button';
-flipButton.onclick = () => {
+menu.appendChild(createSelectImage());
+const selectImage = document.getElementById('selectImage')! as HTMLSelectElement;
+const switchCameraButton = document.createElement('button');
+switchCameraButton.textContent = 'Switch Camera';
+switchCameraButton.id = 'flip-button';
+switchCameraButton.onclick = () => {
   front = !front;
-  (document.getElementById('selectImage')! as HTMLSelectElement).value = (
-    document.getElementById('selectImage')! as HTMLSelectElement
-  ).value;
+  selectImage.value = selectImage.value;
   load();
 };
-app.appendChild(flipButton);
+menu.appendChild(switchCameraButton);
+const cameraButton = document.createElement('button');
+cameraButton.textContent = 'Camera';
+cameraButton.id = 'camera';
+cameraButton.onclick = () => {
+  video.style.display = 'block';
+  video.onclick = () => {
+    ctx.drawImage(video, 0, 0);
+    img.src = canvas.toDataURL('image/png');
+    lightnessThreshold = 20;
+    video.style.display = 'none';
+    load();
+  };
+};
+menu.appendChild(cameraButton);
 img.setAttribute('alt', DEFAULT_IMAGE_URL);
 img.setAttribute('src', DEFAULT_IMAGE_URL);
 const canvas = document.createElement('canvas');
@@ -96,7 +113,7 @@ const load = () => {
   ctx.drawImage(img, 0, 0);
   const imageData = ctx.getImageData(0, 0, width, height);
   const data = new Uint32Array(imageData.data.buffer);
-  const pixels = data.map((color: number) => (Color(color).lightness() > 50 ? TRANSPARENT : BLACK));
+  const pixels = data.map((color: number) => (Color(color).lightness() > lightnessThreshold ? TRANSPARENT : BLACK));
   ctx.putImageData(new ImageData(new Uint8ClampedArray(pixels.buffer), width, height), 0, 0);
   false &&
     pixels.forEach((pixel, i) => {

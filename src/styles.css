@@ -3,14 +3,22 @@ body {
   background-image: linear-gradient(140deg, #5b0ec7, #9acaf9);
 }
 
-select {
+#menu {
   position: absolute;
   left: 0;
   top: 0;
 }
 
-button {
+video {
   position: absolute;
-  left: 50%;
-  bottom: 0;
+  top: 25%;
+  left: 25%;
+  right: 25%;
+  bottom: 25%;
+  z-index: 10;
 }
+/* button { */
+/* position: absolute; */
+/* left: 50%; */
+/* bottom: 0; */
+/* } */
