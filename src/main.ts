@@ -33,6 +33,7 @@ const app: HTMLDivElement = document.querySelector<HTMLDivElement>('#app')!;
 const img: HTMLImageElement = document.createElement('img');
 const selectImage = () => {
   const selectImage = document.createElement('select');
+  selectImage.id = 'selectImage';
   DEFAULT_IMAGES.forEach((image) => {
     const optionElement: HTMLOptionElement = document.createElement('option') as HTMLOptionElement;
     optionElement.text = image;
@@ -45,9 +46,6 @@ const selectImage = () => {
   return selectImage;
 };
 let front = false;
-// document.getElementById("flip-button")!.onclick = () => {
-//   front = !front;
-// };
 
 navigator.mediaDevices
   .getUserMedia({
@@ -66,6 +64,16 @@ navigator.mediaDevices
     console.error(`${err.name}: ${err.message}`);
   });
 app.appendChild(selectImage());
+const flipButton = document.createElement('button');
+flipButton.textContent = 'Flip';
+flipButton.id = 'flip-button';
+flipButton.onclick = () => {
+  front = !front;
+  (document.getElementById('selectImage')! as HTMLSelectElement).value = (
+    document.getElementById('selectImage')! as HTMLSelectElement
+  ).value;
+};
+app.appendChild(flipButton);
 img.setAttribute('alt', DEFAULT_IMAGE_URL);
 img.setAttribute('src', DEFAULT_IMAGE_URL);
 img.addEventListener('load', () => {

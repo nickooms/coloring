@@ -8,3 +8,9 @@ select {
   left: 0;
   top: 0;
 }
+
+button {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+}
