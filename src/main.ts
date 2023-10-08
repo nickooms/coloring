@@ -81,6 +81,7 @@ img.setAttribute('src', DEFAULT_IMAGE_URL);
 const canvas = document.createElement('canvas');
 const ctx = getContext(canvas);
 const load = () => {
+  pixelIndex = 0;
   const { width, height } = img;
   canvas.width = width;
   canvas.height = height;
