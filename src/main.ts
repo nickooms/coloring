@@ -42,6 +42,7 @@ const selectImage = () => {
   });
   selectImage.addEventListener('change', () => {
     img.src = selectImage.value;
+    load();
   });
   return selectImage;
 };
@@ -72,13 +73,14 @@ flipButton.onclick = () => {
   (document.getElementById('selectImage')! as HTMLSelectElement).value = (
     document.getElementById('selectImage')! as HTMLSelectElement
   ).value;
+  load();
 };
 app.appendChild(flipButton);
 img.setAttribute('alt', DEFAULT_IMAGE_URL);
 img.setAttribute('src', DEFAULT_IMAGE_URL);
-img.addEventListener('load', () => {
-  const canvas = document.createElement('canvas');
-  const ctx = getContext(canvas);
+const canvas = document.createElement('canvas');
+const ctx = getContext(canvas);
+const load = () => {
   const { width, height } = img;
   canvas.width = width;
   canvas.height = height;
@@ -132,5 +134,6 @@ img.addEventListener('load', () => {
 
   fillArea();
   img.style.display = 'none';
-});
+};
+img.addEventListener('load', load);
 app.appendChild(img);
