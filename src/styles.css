@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  background-image: linear-gradient(140deg, #5b0ec7, #9acaf9);
+}
+
+select {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
