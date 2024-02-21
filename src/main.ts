@@ -1,7 +1,6 @@
 import Color from 'color';
 import { getContext } from './Canvas';
-// import { MarchingSquares } from './MarchingSquares';
-import { floodFill /* floodFill2 */ } from './floodfill';
+import { floodFill } from './floodfill';
 import './styles.css';
 
 const DEFAULT_IMAGES = [
@@ -18,40 +17,50 @@ const DEFAULT_IMAGES = [
 ];
 
 let pixelIndex = 0;
+
 const randomColor = () => 0xff000000 | (Math.random() * 0xffffff);
+
 const DEFAULT_IMAGE_URL = DEFAULT_IMAGES[3];
 const BLACK = 0xff000000;
 const TRANSPARENT = 0x00000000;
 const NUMBER_OF_COLORS = 256;
 const COLORS = new Array(NUMBER_OF_COLORS).fill(0).map((_) => randomColor());
 let colorIndex = 0;
+
 const getColor = () => {
   colorIndex = (colorIndex + 1) % NUMBER_OF_COLORS;
   return COLORS[colorIndex];
 };
+
 const app: HTMLDivElement = document.querySelector<HTMLDivElement>('#app')!;
 const img: HTMLImageElement = document.createElement('img');
 const menu: HTMLDivElement = document.createElement('div');
 menu.id = 'menu';
 app.appendChild(menu);
+
 const createSelectImage = () => {
   const selectImage = document.createElement('select');
   selectImage.id = 'selectImage';
+
   DEFAULT_IMAGES.forEach((image) => {
     const optionElement: HTMLOptionElement = document.createElement('option') as HTMLOptionElement;
     optionElement.text = image;
     optionElement.value = image;
     selectImage.options.add(optionElement, null);
   });
+
   selectImage.addEventListener('change', () => {
     img.src = selectImage.value;
     load();
   });
+
   return selectImage;
 };
+
 let front = false;
 let lightnessThreshold = 50;
 let video: HTMLVideoElement;
+
 navigator.mediaDevices
   .getUserMedia({
     video: { facingMode: front ? 'user' : 'environment' },
@@ -61,6 +70,7 @@ navigator.mediaDevices
     video.style.display = 'none';
     document.body.appendChild(video);
     video.srcObject = mediaStream;
+
     video.onloadedmetadata = () => {
       video.play();
     };
@@ -68,22 +78,27 @@ navigator.mediaDevices
   .catch((err) => {
     console.error(`${err.name}: ${err.message}`);
   });
+
 menu.appendChild(createSelectImage());
 const selectImage = document.getElementById('selectImage')! as HTMLSelectElement;
 const switchCameraButton = document.createElement('button');
 switchCameraButton.textContent = 'Switch Camera';
 switchCameraButton.id = 'flip-button';
+
 switchCameraButton.onclick = () => {
   front = !front;
   selectImage.value = selectImage.value;
   load();
 };
+
 menu.appendChild(switchCameraButton);
 const cameraButton = document.createElement('button');
 cameraButton.textContent = 'Camera';
 cameraButton.id = 'camera';
+
 cameraButton.onclick = () => {
   video.style.display = 'block';
+
   video.onclick = () => {
     ctx.drawImage(video, 0, 0);
     img.src = canvas.toDataURL('image/png');
@@ -92,16 +107,19 @@ cameraButton.onclick = () => {
     load();
   };
 };
+
 menu.appendChild(cameraButton);
 img.setAttribute('alt', DEFAULT_IMAGE_URL);
 img.setAttribute('src', DEFAULT_IMAGE_URL);
 const canvas = document.createElement('canvas');
 const ctx = getContext(canvas);
+
 const load = () => {
   pixelIndex = 0;
   const { width, height } = img;
   canvas.width = width;
   canvas.height = height;
+
   canvas.addEventListener('click', (e) => {
     const position = { x: e.clientX, y: e.clientY };
     // const filled = floodFill2(imageData, position, randomColor());
@@ -110,11 +128,16 @@ const load = () => {
     const filled = floodFill(canvas, position, getColor());
     console.log(filled);
   });
+
   ctx.drawImage(img, 0, 0);
   const imageData = ctx.getImageData(0, 0, width, height);
   const data = new Uint32Array(imageData.data.buffer);
-  const pixels = data.map((color: number) => (Color(color).lightness() > lightnessThreshold ? TRANSPARENT : BLACK));
+
+  const pixels = data.map((color: number) =>
+    Color(color).lightness() > lightnessThreshold ? TRANSPARENT : BLACK
+  );
   ctx.putImageData(new ImageData(new Uint8ClampedArray(pixels.buffer), width, height), 0, 0);
+
   false &&
     pixels.forEach((pixel, i) => {
       if (pixel === BLACK) {
@@ -125,6 +148,7 @@ const load = () => {
       }
     });
   app.appendChild(canvas);
+
   const findFirstWhitePixel = (canvas: HTMLCanvasElement) => {
     const { width, height } = canvas;
     const ctx = getContext(canvas);
@@ -138,6 +162,7 @@ const load = () => {
     }
     return null;
   };
+
   const fillArea = () => {
     let whitePixel = findFirstWhitePixel(canvas);
     if (whitePixel) {
@@ -153,5 +178,6 @@ const load = () => {
   fillArea();
   img.style.display = 'none';
 };
+
 img.addEventListener('load', load);
 app.appendChild(img);
