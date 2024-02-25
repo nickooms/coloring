@@ -1,7 +1,21 @@
-export const getContext: (canvas: HTMLCanvasElement) => CanvasRenderingContext2D = (canvas) => {
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  if (!ctx) throw new Error('Could not get 2d context');
-  return ctx;
+const CONTEXT_ID_éD = '2d' as const;
+
+const GET_CONTEXT_OPTIONS: CanvasRenderingContext2DSettings = {
+  alpha: true,
+  willReadFrequently: true,
+};
+
+export const getContext: (
+  canvas: HTMLCanvasElement,
+  options?: CanvasRenderingContext2DSettings
+) => CanvasRenderingContext2D = (canvas, options = GET_CONTEXT_OPTIONS) => {
+  const context = canvas.getContext(CONTEXT_ID_éD, options);
+
+  if (!context) {
+    throw new Error('Could not get 2d context');
+  }
+
+  return context;
 };
 
 export const getImageData: (canvas: HTMLCanvasElement) => ImageData = (canvas) => {

@@ -18,7 +18,7 @@ const DEFAULT_IMAGES = [
 
 let pixelIndex = 0;
 
-const randomColor = () => 0xff000000 | (Math.random() * 0xffffff);
+const randomColor = (): number => 0xff000000 | (Math.random() * 0xffffff);
 
 const DEFAULT_IMAGE_URL = DEFAULT_IMAGES[3];
 const BLACK = 0xff000000;
@@ -39,11 +39,11 @@ menu.id = 'menu';
 app.appendChild(menu);
 
 const createSelectImage = () => {
-  const selectImage = document.createElement('select');
+  const selectImage: HTMLSelectElement = document.createElement('select');
   selectImage.id = 'selectImage';
 
   DEFAULT_IMAGES.forEach((image) => {
-    const optionElement: HTMLOptionElement = document.createElement('option') as HTMLOptionElement;
+    const optionElement: HTMLOptionElement = document.createElement('option');
     optionElement.text = image;
     optionElement.value = image;
     selectImage.options.add(optionElement, null);
@@ -85,11 +85,11 @@ const switchCameraButton = document.createElement('button');
 switchCameraButton.textContent = 'Switch Camera';
 switchCameraButton.id = 'flip-button';
 
-switchCameraButton.onclick = () => {
+switchCameraButton.addEventListener('click', () => {
   front = !front;
   selectImage.value = selectImage.value;
   load();
-};
+});
 
 menu.appendChild(switchCameraButton);
 const cameraButton = document.createElement('button');
@@ -138,15 +138,15 @@ const load = () => {
   );
   ctx.putImageData(new ImageData(new Uint8ClampedArray(pixels.buffer), width, height), 0, 0);
 
-  false &&
-    pixels.forEach((pixel, i) => {
-      if (pixel === BLACK) {
-        const x = i % width;
-        const y = Math.floor(i / width);
-        ctx.fillStyle = 'black';
-        ctx.ellipse(x, y, 3, 3, 0, 0, 2 * Math.PI);
-      }
-    });
+  // false &&
+  pixels.forEach((pixel, i) => {
+    if (pixel === BLACK) {
+      const x = i % width;
+      const y = Math.floor(i / width);
+      ctx.fillStyle = 'black';
+      ctx.ellipse(x, y, 3, 3, 0, 0, 2 * Math.PI);
+    }
+  });
   app.appendChild(canvas);
 
   const findFirstWhitePixel = (canvas: HTMLCanvasElement) => {
