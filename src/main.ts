@@ -139,11 +139,11 @@ const load = () => {
   ctx.putImageData(new ImageData(new Uint8ClampedArray(pixels.buffer), width, height), 0, 0);
 
   // false &&
+  ctx.fillStyle = 'black';
   pixels.forEach((pixel, i) => {
     if (pixel === BLACK) {
       const x = i % width;
       const y = Math.floor(i / width);
-      ctx.fillStyle = 'black';
       ctx.ellipse(x, y, 3, 3, 0, 0, 2 * Math.PI);
     }
   });
