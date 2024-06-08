@@ -119,7 +119,8 @@ const load = () => {
   const { width, height } = img;
   canvas.width = width;
   canvas.height = height;
-
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
   canvas.addEventListener('click', (e) => {
     const position = { x: e.clientX, y: e.clientY };
     // const filled = floodFill2(imageData, position, randomColor());
